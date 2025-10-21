@@ -1,0 +1,75 @@
+LAIM — Business Case (Local AI Assistant for Invoice Management)
+
+Executive Summary
+
+LAIM is a privacy-first, on-premise invoice intelligence platform that automates invoice intake, data extraction, validation, and analytics. It uses a clean Streamlit UI, local analytics (pandas + SQLite), and a lightweight local LLM (via llama-cpp-python, GGUF models). Users ask natural-language questions (“Show IRPF by month for vendor X.”) and get safe, auditable answers. The aim: reduce manual effort and cycle time, boost accuracy and auditability, and enable self-service insights—without sending sensitive data outside the network.
+
+Problem
+	•	Manual entry across inconsistent PDF/image templates; copy-paste and rekeying errors.
+	•	Slow time-to-“ready to pay”; inconsistent extraction of key fields (TOTAL_FACTURA, IVA/IGIC/IRPF, FechaFactura, SUBCONCEPTO).
+	•	Limited self-service analytics; reliance on ad-hoc spreadsheets.
+	•	GDPR/compliance pressure; low tolerance for data leaving the network.
+
+Objectives (What we intend)
+	1.	Automate reliable extraction for core fields with NER + rules, multilingual (ES/PT/EN/IT).
+	2.	Provide safe, curated NL→SQL analytics so non-technical users get correct, governed answers.
+	3.	Standardise KPIs/exports for Finance, Ops, and Audit, with complete logs and snapshots.
+	4.	Operate 100% on-prem (privacy-first), zero outbound by default.
+	5.	Deliver measurable gains in touch time, lead time, and STP (straight-through processing) rate.
+
+Scope
+
+In scope (MVP): Streamlit UI; OCR/text → NER (spaCy) with regex/rule fallbacks for TOTAL_FACTURA, IVA/IGIC/IRPF, FechaFactura, SUBCONCEPTO; consolidated store (Excel resultado_final_consolidado_afinado.xlsx + SQLite); safe NL→SQL (allow-listed intents); KPIs; CSV/Excel exports; NDJSON logs; Parquet snapshots; offline/online indicator; versioned releases.
+Out of scope (MVP): ERP write-back/payments; vendor master stewardship; multi-entity currency consolidation beyond read-only analytics.
+
+Stakeholders
+
+AP Operations, Finance/BI, Audit/Compliance, IT/Security (RBAC, hardening, zero outbound).
+
+Solution Overview
+	•	UI: Streamlit (non-technical friendly).
+	•	Data: pandas + SQLite (local), Excel exports.
+	•	AI: llama-cpp-python with local GGUF models; optional LoRA-tuned “Rsquare AI”.
+	•	Pipelines: OCR + text → NER (spaCy) with rule back-ups; multilingual.
+	•	Analytics: NL→SQL with allow-list templates and a semantic layer.
+	•	Ops & Audit: NDJSON event logs, Parquet snapshots, RBAC, offline/online indicator.
+
+KPIs & Targets
+	•	Touch time per invoice ↓ 50–70%.
+	•	Lead time (receipt → ready-to-pay) ↓ 30–60%.
+	•	STP rate ↑ monthly.
+	•	Field-level accuracy (TOTAL_FACTURA, IVA/IGIC/IRPF, FechaFactura) ≥ 95% after tuning.
+	•	NL→SQL answer precision on curated set ≥ 90%.
+	•	Audit completeness 100% events logged with hash/timestamp.
+	•	User CSAT ≥ 4.3/5 within 60 days.
+
+Financials & ROI (illustrative)
+	•	Volume: 500 invoices/day; time saved 2 min/invoice ⇒ ~16.7 h/day.
+	•	Loaded cost €30/h ⇒ ~€500/day, ~€110k/year (220 workdays).
+	•	Sensitivity: 1 min ⇒ ~€55k/year; 3 min ⇒ ~€165k/year.
+	•	TCO (12–18 months): one on-prem workstation/server (32–64 GB RAM), engineering setup/tuning, ongoing maintenance/security.
+	•	Typical break-even: within months at the above volumes.
+
+Risks & Mitigations
+
+Hallucinations/wrong aggregations → allow-listed intents, unit tests, confidence display, human-in-the-loop.
+OCR variability → dual engine, quality thresholds, vendor profiles, rule back-ups.
+Model/data drift → quarterly eval sets, regression tests, rollbackable versions.
+Change management → champions, short video SOPs, 2-week hypercare.
+Security → RBAC, encryption at rest, zero outbound by default, audit logs.
+
+Implementation Plan (12-week MVP)
+	•	Weeks 1–2: Environment hardening, ingestion pipeline, baseline OCR/NER accuracy.
+	•	Weeks 3–5: Core field tuning (TOTAL_FACTURA, IVA/IGIC/IRPF, FechaFactura, SUBCONCEPTO), logs & snapshots.
+	•	Weeks 6–8: KPIs, exports, read-only NL→SQL (curated intents), tests/guardrails.
+	•	Weeks 9–10: User onboarding, drift monitors, CSAT loop.
+	•	Weeks 11–12: Hardening, documentation, go-live with weekly demos and rollback plan.
+
+Success Criteria (Go-live + 12 weeks)
+
+≥ 50% touch-time reduction, ≥ 30% faster cycle time; ≥ 90% precision on curated NL queries; STP trending upward; auditors accept exports/logs with no rework; teams use LAIM daily for KPIs and vendor checks.
+
+Decision & Next Steps
+
+Approve MVP scope and budget; confirm hardware sizing and security checklist (on-prem, zero outbound); provide a labeled sample set (ES/PT/EN/IT) with ground truth; 2-hour discovery to finalise NL intents and KPIs; kick off Phase 1 with weekly demos and a named product owner.
+	◦	
